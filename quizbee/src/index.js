@@ -1,17 +1,40 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import "./assets/style.css";
 import quizSrvice from "./quizService";
-
+import QuestionBox from "./components/QuestionBox";
 class QuizBee extends Component {
-    render(){
-        return(
+    state = {
+        questionBank: []
+    };
+    getQuestions = () => {
+        quizSrvice().then(question => {
+            this.setState({
+                questionBank: question
+            });
+        });
+    };
+    componentDidMount() {
+        this.getQuestions();
+    }
+    render() {
+        return (
             <div className="container">
                 <div className="title">QuizBee</div>
+                {this.state.questionBank.length > 0 &&
+                    this.state.questionBank.map(
+                        ({ question, answers, correct, questionId }) => (
+                            <QuestionBox
+                                question={question}
+                                options={answers}
+                                key={questionId}
+                            />
+                        )
+                    )}
             </div>
 
         );
     }
 }
 
-ReactDOM.render(<QuizBee/>,document.getElementById("root"));
+ReactDOM.render(<QuizBee />, document.getElementById("root"));
